@@ -27,6 +27,7 @@
     "echarts": "^5.4.1",
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
+    "eventsource-parser": "^0.1.0",
     "github-markdown-css": "^5.1.0",
     "highlight.js": "^11.7.0",
     "lodash": "^4.17.21",

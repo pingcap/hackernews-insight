@@ -3,6 +3,7 @@ import pino from 'pino';
 
 import Question2SQLTemplate from 'src/services/bot/templates/Question2SQLTemplate';
 import Data2ChartTemplate from 'src/services/bot/templates/Data2ChartTemplate';
+import { OpenAIStream, OpenAIStreamPayload } from 'src/utils/openAIStream';
 
 export class BotService {
   private readonly openAI: OpenAIApi;
@@ -41,6 +42,26 @@ export class BotService {
     );
 
     return { answer: data?.choices[0]?.text, id: data.id };
+  }
+
+  async getAnswerStream(question: string, template: Question2SQLTemplate) {
+    const prompt = template.getTemplate(question);
+
+    const payload: OpenAIStreamPayload = {
+      model: 'text-davinci-003',
+      prompt,
+      temperature: 0.7,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+      max_tokens: 800,
+      stream: true,
+      n: 1,
+    };
+
+    // const stream = await OpenAIStream(payload);
+    // return new Response(stream);
+    return OpenAIStream(payload);
   }
 
   async data2Chart(question: string, data: any, template: Data2ChartTemplate) {
