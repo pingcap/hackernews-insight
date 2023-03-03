@@ -21,9 +21,14 @@ export class BotService {
     const prompt = template.getTemplate(question);
 
     const data = await this.openAI
-      .createCompletion({
-        model: 'text-davinci-003',
-        prompt,
+      .createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
         max_tokens: 800,
         temperature: 0,
         n: 1,
@@ -40,7 +45,7 @@ export class BotService {
       `BotService.getAnswer`
     );
 
-    return { answer: data?.choices[0]?.text, id: data.id };
+    return { answer: data?.choices[0]?.message?.content, id: data.id };
   }
 
   async data2Chart(question: string, data: any, template: Data2ChartTemplate) {
@@ -51,16 +56,20 @@ export class BotService {
 
     const prompt = template.getTemplate(question, dataSilce);
     const res = await this.openAI
-      .createCompletion({
-        model: 'text-davinci-003',
-        prompt,
+      .createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
         stream: false,
         stop: ['#', '---'],
         temperature: 0,
         max_tokens: 100,
         // top_p: 0.4,
         n: 1,
-        logprobs: 2,
       })
       .then((response) => response.data);
 
@@ -72,6 +81,6 @@ export class BotService {
       `BotService.data2Chart`
     );
 
-    return { answer: res?.choices[0]?.text, id: res.id };
+    return { answer: res?.choices[0]?.message?.content, id: res.id };
   }
 }
