@@ -5,11 +5,11 @@ import Question2SQLTemplate from 'src/services/bot/templates/Question2SQLTemplat
 import Data2ChartTemplate from 'src/services/bot/templates/Data2ChartTemplate';
 
 export class BotService {
-  private readonly openAI: OpenAIApi;
+  protected readonly openAI: OpenAIApi;
 
   constructor(
-    private readonly log: pino.Logger,
-    private readonly apiKey: string
+    protected readonly log: pino.Logger,
+    protected readonly apiKey: string
   ) {
     const configuration = new Configuration({
       apiKey: this.apiKey,
