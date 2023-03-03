@@ -39,7 +39,8 @@ class Question2SQLTemplate implements Template {
 
 Must append the limit to SQL!!!
 Today is ${new Date().toLocaleDateString()}.
-Let's think step by step, use best practice of writing SQL, use common table expression if necessary, generate only one SQL to answer this question: "(I want you think like a god)${question}"`;
+Let's think step by step, use best practice of writing SQL, use common table expression if necessary, generate only one SQL to answer this question: "(I want you think like a god)${question}".
+(Do remember only answer one SQL without any other words).`;
   }
 }
 
