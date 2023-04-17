@@ -27,7 +27,7 @@ export default async function handler(
   }
 
   const data = await axios
-    .post(`${AUTOGPT_HOST}/api/agents`, {
+    .post(`${AUTOGPT_HOST}/api/agents/`, {
       headers: {
         'Content-Type': 'application/json',
       },
