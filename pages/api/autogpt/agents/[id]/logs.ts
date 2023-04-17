@@ -23,32 +23,13 @@ export default async function handler(
     return;
   }
 
-  res.status(200).json([
-    {
-      id: 232,
-      content: 'Thoughts: 。。。。。',
-      role: 'system',
-      log_level: 'info',
-      status: 'processing',
-      created_at: '2023-04-17T08:42:40.570Z',
-    },
-    {
-      id: 251,
-      content: 'Task complete',
-      role: 'system',
-      log_level: 'info',
-      status: 'task_complete',
-      created_at: '2023-04-17T08:44:06.905Z',
-    },
-  ]);
+  const data = await axios
+    .get(`${AUTOGPT_HOST}/api/agents/${id}/logs/?start_from=0`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => response.data as AgentLogType[]);
 
-  // const data = await axios
-  //   .get(`${AUTOGPT_HOST}/api/agents/${id}/logs/?start_from=0`, {
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //   })
-  //   .then((response) => response.data as AgentLogType[]);
-
-  // res.status(200).json(data);
+  res.status(200).json(data);
 }
