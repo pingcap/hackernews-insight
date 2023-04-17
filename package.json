@@ -6,6 +6,7 @@
     "dev": "next dev | pino-pretty",
     "build": "next build",
     "start": "next start | pino-pretty",
+    "start:https": "next start -p 443 | pino-pretty",
     "lint": "next lint"
   },
   "dependencies": {
