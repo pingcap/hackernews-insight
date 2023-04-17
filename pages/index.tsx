@@ -59,9 +59,9 @@ export default function Home(props: HomeProps) {
     <>
       <Layout recapcha disableSearch={loading} hideSearch>
         {questions.length < 5 && <HorizontalBar />}
-        <AnswerCardsGroup
+        {/* <AnswerCardsGroup
           initialData={{ rows, sqlAnswer, chartAnswer, question }}
-        />
+        /> */}
         <AutoGPTMessageGroup />
       </Layout>
     </>
