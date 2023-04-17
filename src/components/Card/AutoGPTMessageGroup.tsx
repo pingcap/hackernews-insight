@@ -16,29 +16,76 @@ import Head from 'next/head';
 import ReactMarkdown from 'react-markdown';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useRouter } from 'next/router';
 
 import 'github-markdown-css/github-markdown-light.css';
 
 import { questionsState } from 'src/recoil/atoms';
 import { postAutoGPTAgents, getAutoGPTAgentLogs } from 'src/api/autogpt/agents';
 import type { AgentLogType } from 'pages/api/autogpt/agents/[id]/logs';
+import { SearchInput } from 'src/components/Layout/QuestionHeader';
 
-export default function AutoGPTMessageGroup(props: {}) {
-  const {} = props;
+function AutoGPTSearchInput() {
+  const [search, setSearch] = React.useState<string>('');
 
+  const router = useRouter();
+
+  const handleSearch = (content: string) => {
+    if (content && content !== router.query?.search) {
+      router.push(`/?search=${encodeURIComponent(search)}`);
+    }
+  };
+
+  // React.useEffect(() => {
+  //   if (router.query?.search) {
+  //     setSearch(decodeURIComponent(router.query?.search as string));
+  //   }
+  // }, [router.query?.search]);
+
+  return (
+    <SearchInput
+      value={search}
+      onChange={(e) => {
+        setSearch(e.target.value);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          handleSearch(search);
+          setSearch('');
+        }
+      }}
+      onClear={() => {
+        setSearch('');
+        handleSearch('');
+      }}
+    />
+  );
+}
+
+export default function AutoGPTMessageGroup() {
   const questions = useRecoilValue(questionsState);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2rem',
-      }}
-    >
-      {questions.map((q, idx) => (
-        <AutoGPTMessagePair key={`${idx}-${q}`} question={q} />
-      ))}
+    <Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column-reverse',
+          gap: '2rem',
+
+          height: 'calc(100vh - 200px)',
+          overflowY: 'auto',
+          mb: '1rem',
+        }}
+      >
+        {questions
+          .slice()
+          .reverse()
+          .map((q, idx) => (
+            <AutoGPTMessagePair key={`${q}`} question={q} />
+          ))}
+      </Box>
+      <AutoGPTSearchInput />
     </Box>
   );
 }
@@ -60,18 +107,25 @@ export function AutoGPTMessagePair(props: { question: string }) {
   }, [question]);
 
   React.useEffect(() => {
+    let stop = false;
+
     const run = async () => {
+      if (stop) return;
       if (agentId) {
         const res = await getAutoGPTAgentLogs(agentId);
         setLogs(res);
+        if (
+          res[res.length - 1].status === 'task_complete' ||
+          res[res.length - 1].log_level === 'error'
+        ) {
+          stop = true;
+        }
       }
     };
 
-    run();
+    const interval = setInterval(run, 2000);
 
-    // const interval = setInterval(run, 2000);
-
-    // return () => clearInterval(interval);
+    return () => clearInterval(interval);
   }, [agentId]);
 
   return (
@@ -91,15 +145,7 @@ export function AutoGPTMessagePair(props: { question: string }) {
 export function AutoGPTMessageBot(props: { logs: AgentLogType[] }) {
   const { logs } = props;
 
-  const [firstLog, ...restLogs] = logs;
-
-  if (logs.length === 1 && firstLog.log_level === 'loading') {
-    return (
-      <ChatBubble role="assistant">
-        <CircularProgress size={20} />
-      </ChatBubble>
-    );
-  }
+  const lastLog = logs[logs.length - 1];
 
   return (
     <>
@@ -108,8 +154,21 @@ export function AutoGPTMessageBot(props: { logs: AgentLogType[] }) {
           key={`${idx}-${log}`}
           role="assistant"
           content={log.content}
+          error={log.log_level === 'error'}
         />
       ))}
+      {['loading', 'processing'].includes(lastLog.status) && (
+        <ChatBubble role="assistant">
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <CircularProgress size={20} />
+          </Box>
+        </ChatBubble>
+      )}
     </>
   );
 }
@@ -118,8 +177,9 @@ function ChatBubble(props: {
   content?: string;
   role: 'user' | 'assistant';
   children?: React.ReactNode;
+  error?: boolean;
 }) {
-  const { role, content, children } = props;
+  const { role, content, error, children } = props;
   return (
     <>
       <Box
@@ -140,6 +200,10 @@ function ChatBubble(props: {
             '& .markdown-body': {
               color: role === 'user' ? 'primary.contrastText' : 'text.primary',
               bgcolor: 'transparent',
+
+              ...(error && {
+                color: (theme) => theme.palette.error.main,
+              }),
             },
           }}
         >

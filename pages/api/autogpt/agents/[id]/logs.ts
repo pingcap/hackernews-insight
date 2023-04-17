@@ -5,7 +5,8 @@ export type AgentLogType = {
   id: number;
   content: string;
   role: 'system';
-  log_level: 'loading' | 'info' | 'error';
+  log_level: 'debug' | 'info' | 'error';
+  status: 'loading' | 'processing' | 'task_complete';
   created_at: string;
 };
 
@@ -24,49 +25,20 @@ export default async function handler(
 
   res.status(200).json([
     {
-      id: 138,
-      content: 'Thinking...',
-      role: 'system',
-      log_level: 'loading',
-      created_at: '2023-04-17T05:33:09.327Z',
-    },
-    {
-      id: 139,
-      content:
-        '**Thoughts:** ```I need to list the tables in the database to start.```\n**Reasoning:** ```Following the standard operating procedure, the first step is to list the available tables in the database.```\n**Plan:** ```\n- List tables in the database\n- Inspect table schema\n- Write an SQL query to get the desired information\n- Shutdown\n```\n**Criticism:** ```No self-criticism at this moment, as I am following the standard operating procedure.```\n',
+      id: 232,
+      content: 'Thoughts: 。。。。。',
       role: 'system',
       log_level: 'info',
-      created_at: '2023-04-17T05:33:30.558Z',
+      status: 'processing',
+      created_at: '2023-04-17T08:42:40.570Z',
     },
     {
-      id: 140,
-      content:
-        "NEXT ACTION: COMMAND = `tidb_query_executor`, ARARGUMENTSGS = `{'query': 'SHOW TABLES'}`",
+      id: 251,
+      content: 'Task complete',
       role: 'system',
       log_level: 'info',
-      created_at: '2023-04-17T05:33:30.574Z',
-    },
-    {
-      id: 141,
-      content: 'Executing command...',
-      role: 'system',
-      log_level: 'loading',
-      created_at: '2023-04-17T05:33:30.578Z',
-    },
-    {
-      id: 142,
-      content:
-        "Command tidb_query_executor returned: Command tidb_query_executor returned: [{'Tables_in_hackernews': 'items'}, {'Tables_in_hackernews': 'users'}]",
-      role: 'system',
-      log_level: 'info',
-      created_at: '2023-04-17T05:33:33.266Z',
-    },
-    {
-      id: 143,
-      content: 'Thinking...',
-      role: 'system',
-      log_level: 'loading',
-      created_at: '2023-04-17T05:33:33.315Z',
+      status: 'task_complete',
+      created_at: '2023-04-17T08:44:06.905Z',
     },
   ]);
 
