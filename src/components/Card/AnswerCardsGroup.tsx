@@ -12,7 +12,7 @@ export default function AnswerCardsGroup(props: { initialData: HomeProps }) {
     initialData: { rows, sqlAnswer, chartAnswer, question },
   } = props;
 
-  const questions = useRecoilValue(questionsState);
+  // const questions = useRecoilValue(questionsState);
 
   return (
     <Box
@@ -32,9 +32,9 @@ export default function AnswerCardsGroup(props: { initialData: HomeProps }) {
           chartError={null}
         />
       )}
-      {questions.map((q, idx) => (
+      {/* {questions.map((q, idx) => (
         <AnswerCard key={`${idx}-${q}`} question={q} />
-      ))}
+      ))} */}
     </Box>
   );
 }

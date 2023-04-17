@@ -1,6 +1,9 @@
 import { axiosWithRecaptchaToken } from 'src/utils/axios';
 import { waitGRecaptchaReady } from 'src/api/question';
 
+import type { AgentLogType } from 'pages/api/autogpt/agents/[id]/logs';
+import type { AgentResType } from 'pages/api/autogpt/agents';
+
 export async function postAutoGPTAgents(question: string) {
   await waitGRecaptchaReady();
   const grecaptchaToken = await grecaptcha.enterprise.execute(
@@ -15,7 +18,7 @@ export async function postAutoGPTAgents(question: string) {
     .post('/api/autogpt/agents', {
       question,
     })
-    .then((response) => response.data);
+    .then((response) => response.data as AgentResType);
 }
 
 export async function getAutoGPTAgentLogs(id: number | string) {
@@ -30,5 +33,5 @@ export async function getAutoGPTAgentLogs(id: number | string) {
 
   return axios
     .get(`/api/autogpt/agents/${id}/logs?start_from=0`)
-    .then((response) => response.data);
+    .then((response) => response.data as AgentLogType[]);
 }

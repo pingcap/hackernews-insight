@@ -55,10 +55,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export interface SearchAppBarProps {
   handleSearch?: (question: string) => void;
   disableSearch?: boolean;
+  hideSearch?: boolean;
 }
 
 export default function SearchAppBar(props: SearchAppBarProps) {
-  const { disableSearch = false } = props;
+  const { disableSearch = false, hideSearch = false } = props;
 
   const [search, setSearch] = React.useState('');
 
@@ -87,7 +88,13 @@ export default function SearchAppBar(props: SearchAppBarProps) {
         }}
       >
         <Container>
-          <Toolbar sx={{ gap: '1rem', backgroundColor: 'hn.primary' }}>
+          <Toolbar
+            sx={{
+              gap: '1rem',
+              backgroundColor: 'hn.primary',
+              justifyContent: 'space-between',
+            }}
+          >
             <Link href="/">
               <Box
                 sx={{
@@ -118,78 +125,80 @@ export default function SearchAppBar(props: SearchAppBarProps) {
                 </Typography>
               </Box>
             </Link>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Input your question here…"
-                inputProps={{ 'aria-label': 'search' }}
-                disabled={disableSearch}
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    console.log('search', search);
-                    if (handleSearch) {
-                      handleSearch(search);
+            {!hideSearch && (
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Input your question here…"
+                  inputProps={{ 'aria-label': 'search' }}
+                  disabled={disableSearch}
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      console.log('search', search);
+                      if (handleSearch) {
+                        handleSearch(search);
+                      }
                     }
-                  }
-                }}
-              />
-              <IconButton
-                size="small"
-                aria-label="clear"
-                disableRipple
-                disabled={disableSearch}
-                onClick={() => {
-                  setSearch('');
-                  router.query?.search && router.push('/');
-                }}
-                sx={{
-                  display: search ? 'inline-flex' : 'none',
-                }}
-              >
-                <ClearIcon fontSize="small" />
-              </IconButton>
-              <Box
-                display="flex"
-                alignItems="center"
-                gap="0.5rem"
-                pl="0.5rem"
-                pr="0.5rem"
-              >
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  whiteSpace="nowrap"
-                >
-                  Powered by
-                </Typography>
-                <Box
-                  component="a"
-                  target="_blank"
-                  href="https://tidbcloud.com/channel?utm_source=chat2query-hackernews&utm_medium=referral"
+                  }}
+                />
+                <IconButton
+                  size="small"
+                  aria-label="clear"
+                  disableRipple
+                  disabled={disableSearch}
+                  onClick={() => {
+                    setSearch('');
+                    router.query?.search && router.push('/');
+                  }}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
+                    display: search ? 'inline-flex' : 'none',
                   }}
                 >
-                  <TiDBCloudLogo />
+                  <ClearIcon fontSize="small" />
+                </IconButton>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  gap="0.5rem"
+                  pl="0.5rem"
+                  pr="0.5rem"
+                >
                   <Typography
                     variant="body2"
-                    fontWeight="bold"
-                    color="#444"
+                    color="text.secondary"
                     whiteSpace="nowrap"
                   >
-                    TiDB Cloud
+                    Powered by
                   </Typography>
+                  <Box
+                    component="a"
+                    target="_blank"
+                    href="https://tidbcloud.com/channel?utm_source=chat2query-hackernews&utm_medium=referral"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                    }}
+                  >
+                    <TiDBCloudLogo />
+                    <Typography
+                      variant="body2"
+                      fontWeight="bold"
+                      color="#444"
+                      whiteSpace="nowrap"
+                    >
+                      TiDB Cloud
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-            </Search>
+              </Search>
+            )}
             <IconButton
               aria-label="admin"
               disableRipple

@@ -18,8 +18,15 @@ export interface LayoutProps {
 }
 
 export default function Layout(props: LayoutProps & SearchAppBarProps) {
-  const { children, handleSearch, disableSearch, markdown, recapcha, seo } =
-    props;
+  const {
+    children,
+    handleSearch,
+    disableSearch,
+    hideSearch,
+    markdown,
+    recapcha,
+    seo,
+  } = props;
 
   return (
     <>
@@ -30,7 +37,11 @@ export default function Layout(props: LayoutProps & SearchAppBarProps) {
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="https://www.google.com/recaptcha/enterprise.js?render=6LddhhAkAAAAAK71u3xPexiZdT62i4q4PLETG47s"></script>
       </Head>
-      <Header handleSearch={handleSearch} disableSearch={disableSearch} />
+      <Header
+        handleSearch={handleSearch}
+        disableSearch={disableSearch}
+        hideSearch={hideSearch}
+      />
       <Seo {...seo} />
       <Box
         sx={{

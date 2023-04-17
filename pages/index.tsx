@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import Layout from 'src/components/Layout';
 import AnswerCardsGroup from 'src/components/Card/AnswerCardsGroup';
+import AutoGPTMessageGroup from 'src/components/Card/AutoGPTMessageGroup';
 import { questionsState, questionLoadingState } from 'src/recoil/atoms';
 import logger from 'next-pino/logger';
 
@@ -56,11 +57,12 @@ export default function Home(props: HomeProps) {
 
   return (
     <>
-      <Layout recapcha disableSearch={loading}>
+      <Layout recapcha disableSearch={loading} hideSearch>
         {questions.length < 5 && <HorizontalBar />}
         <AnswerCardsGroup
           initialData={{ rows, sqlAnswer, chartAnswer, question }}
         />
+        <AutoGPTMessageGroup />
       </Layout>
     </>
   );
