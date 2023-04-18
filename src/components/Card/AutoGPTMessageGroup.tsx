@@ -176,23 +176,35 @@ export function AutoGPTMessagePair(props: {
     questionDisableInputState
   );
 
+  const { enqueueSnackbar } = useSnackbar();
+
   React.useEffect(() => {
     const run = async () => {
-      const res = await postAutoGPTAgents(q);
-      const { id } = res;
-      setAgentId(id);
-      setQuestions((prev) => {
-        const result = [];
-        const idx = prev.findIndex((q) => q.id === questionId);
-        if (idx !== -1) {
-          result.push(...prev.slice(0, idx));
-          result.push({ ...prev[idx], agentId: id });
-          result.push(...prev.slice(idx + 1));
-        } else {
-          result.push(...prev);
-        }
-        return result;
-      });
+      try {
+        const res = await postAutoGPTAgents(q);
+        const { id } = res;
+        setAgentId(id);
+        setQuestions((prev) => {
+          const result = [];
+          const idx = prev.findIndex((q) => q.id === questionId);
+          if (idx !== -1) {
+            result.push(...prev.slice(0, idx));
+            result.push({ ...prev[idx], agentId: id });
+            result.push(...prev.slice(idx + 1));
+          } else {
+            result.push(...prev);
+          }
+          return result;
+        });
+      } catch (error: any) {
+        console.error(error);
+        enqueueSnackbar(
+          <Typography>
+            {`${error?.response?.data?.error || error?.message || error}`}
+          </Typography>,
+          { variant: 'error' }
+        );
+      }
     };
 
     q && run();
