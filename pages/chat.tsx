@@ -16,6 +16,7 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Head from 'next/head';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import 'github-markdown-css/github-markdown-light.css';
@@ -171,7 +172,9 @@ function ChatBubble(props: { item: ChatMessageType }) {
           }}
           className="markdown-body"
         >
-          {role === 'user' && <ReactMarkdown>{content}</ReactMarkdown>}
+          {role === 'user' && (
+            <ReactMarkdown rehypePlugins={[remarkGfm]}>{content}</ReactMarkdown>
+          )}
           {role === 'assistant' && <AssistantBubbleContent content={content} />}
         </Paper>
       </Box>
@@ -271,7 +274,7 @@ const AssistantBubbleContent = (props: { content: string }) => {
 
   return (
     <>
-      <ReactMarkdown>{content}</ReactMarkdown>
+      <ReactMarkdown rehypePlugins={[remarkGfm]}>{content}</ReactMarkdown>
       {SqlStrMemo && (
         <LoadingButton
           loading={loading}
@@ -292,15 +295,17 @@ const AssistantBubbleContent = (props: { content: string }) => {
           {errorMsg}
         </Typography>
       )}
-      {result && (<Box pt={2}>
-        <CodeBlock
-          language="bash"
-          boxSx={{
-            border: '0.5px solid #e0e0e0',
-          }}
-        >
-          {row2string(result.rows)}
-        </CodeBlock></Box>
+      {result && (
+        <Box pt={2}>
+          <CodeBlock
+            language="bash"
+            boxSx={{
+              border: '0.5px solid #e0e0e0',
+            }}
+          >
+            {row2string(result.rows)}
+          </CodeBlock>
+        </Box>
       )}
     </>
   );
