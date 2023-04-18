@@ -36,10 +36,43 @@ import type { AgentLogType } from 'pages/api/autogpt/agents/[id]/logs';
 import { SearchInput } from 'src/components/Layout/QuestionHeader';
 import { generateRandomString } from 'src/utils';
 import { QuestionType } from 'src/types';
+import SuggestedQuestionCard from 'src/components/Card/SuggestedQuestionCard';
 
-function AutoGPTSearchInput() {
+function AutoGPTSearchInput(props: {
+  handleSearch: (q: string, agentId?: number) => void;
+}) {
+  const { handleSearch } = props;
+
   const [search, setSearch] = React.useState<string>('');
 
+  const [questions, setQuestions] = useRecoilState(questionsState);
+  // const [loading, setLoading] = useRecoilState(questionLoadingState);
+  const [disableInput, setDisableInput] = useRecoilState(
+    questionDisableInputState
+  );
+
+  return (
+    <SearchInput
+      disabled={disableInput}
+      value={search}
+      onChange={(e) => {
+        setSearch(e.target.value);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          handleSearch(search, questions.slice(-1)[0]?.agentId);
+          setSearch('');
+        }
+      }}
+      onClear={() => {
+        setSearch('');
+        handleSearch('');
+      }}
+    />
+  );
+}
+
+export default function AutoGPTMessageGroup() {
   const [questions, setQuestions] = useRecoilState(questionsState);
   const [loading, setLoading] = useRecoilState(questionLoadingState);
   const [disableInput, setDisableInput] = useRecoilState(
@@ -49,8 +82,8 @@ function AutoGPTSearchInput() {
   const { enqueueSnackbar } = useSnackbar();
   // const router = useRouter();
 
-  const handleSearch = async (q: string) => {
-    if (loading && questions.slice(-1)[0]?.agentId) {
+  const handleSearch = async (q: string, agentId?: number) => {
+    if (loading && agentId) {
       setQuestions((prev) => [
         ...prev.slice(0, -1),
         {
@@ -67,10 +100,7 @@ function AutoGPTSearchInput() {
       ]);
       setDisableInput(true);
       try {
-        await postAutoGPTAgentFeedback(
-          questions.slice(-1)[0].agentId as number,
-          q
-        );
+        await postAutoGPTAgentFeedback(agentId, q);
       } catch (error: any) {
         console.error(error);
         enqueueSnackbar(
@@ -95,36 +125,6 @@ function AutoGPTSearchInput() {
     ]);
   };
 
-  // React.useEffect(() => {
-  //   if (router.query?.search) {
-  //     setSearch(decodeURIComponent(router.query?.search as string));
-  //   }
-  // }, [router.query?.search]);
-
-  return (
-    <SearchInput
-      disabled={disableInput}
-      value={search}
-      onChange={(e) => {
-        setSearch(e.target.value);
-      }}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          handleSearch(search);
-          setSearch('');
-        }
-      }}
-      onClear={() => {
-        setSearch('');
-        handleSearch('');
-      }}
-    />
-  );
-}
-
-export default function AutoGPTMessageGroup() {
-  const questions = useRecoilValue(questionsState);
-
   return (
     <Box>
       <Box
@@ -144,8 +144,18 @@ export default function AutoGPTMessageGroup() {
           .map((q, idx) => (
             <AutoGPTMessagePair key={`pair-${q.id}`} question={q} />
           ))}
+
+        {questions.length === 0 && (
+          <ChatBubble role="assistant">
+            <SuggestedQuestionCard
+              onChipClick={(q: string) => () => {
+                handleSearch(q);
+              }}
+            />
+          </ChatBubble>
+        )}
       </Box>
-      <AutoGPTSearchInput />
+      <AutoGPTSearchInput handleSearch={handleSearch} />
     </Box>
   );
 }

@@ -12,7 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import Container from '@mui/material/Container';
 import ClearIcon from '@mui/icons-material/Clear';
-import SettingsIcon from '@mui/icons-material/Settings';
+import TerminalIcon from '@mui/icons-material/Terminal';
 
 import { TiDBCloudLogo, WebsiteLogo } from 'src/components/Icons';
 
@@ -59,7 +59,7 @@ export interface SearchAppBarProps {
 }
 
 export default function SearchAppBar(props: SearchAppBarProps) {
-  const { disableSearch = false, hideSearch = false } = props;
+  const { disableSearch = false, hideSearch = true } = props;
 
   const [search, setSearch] = React.useState('');
 
@@ -147,10 +147,10 @@ export default function SearchAppBar(props: SearchAppBarProps) {
               aria-label="admin"
               disableRipple
               onClick={() => {
-                router && router.push('/admin');
+                router && router.push('/playground');
               }}
             >
-              <SettingsIcon />
+              <TerminalIcon />
             </IconButton>
           </Toolbar>
         </Container>
