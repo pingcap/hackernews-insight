@@ -26,23 +26,16 @@ export default async function handler(
     return;
   }
 
-  res.status(200).json({
-    id: 1,
-    ai_name: 'AutoGPT',
-    ai_role: 'system',
-    ai_goals: ['Answer: Total number of registered users?'],
-  })
+  const data = await axios
+    .post(`${AUTOGPT_HOST}/api/agents/`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        question,
+      },
+    })
+    .then((response) => response.data as AgentResType);
 
-  // const data = await axios
-  //   .post(`${AUTOGPT_HOST}/api/agents/`, {
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: {
-  //       question,
-  //     },
-  //   })
-  //   .then((response) => response.data as AgentResType);
-
-  // res.status(200).json(data);
+  res.status(200).json(data);
 }
