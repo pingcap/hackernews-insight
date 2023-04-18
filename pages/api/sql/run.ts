@@ -29,14 +29,19 @@ export default async function handler(
 
   logger.info(sql);
 
-  const mysqlService = new MySQLService(await initConnection());
-  const { rows, fields, error } = await mysqlService.execute(sql);
-  mysqlService.cleanUp();
-  if (error) {
+  try {
+    const mysqlService = new MySQLService(await initConnection());
+    const { rows, fields, error } = await mysqlService.execute(sql);
+    mysqlService.cleanUp();
+    if (error) {
+      logger.error(error);
+      res.status(500).json({ error });
+      return;
+    }
+    logger.info(rows);
+    res.status(200).json({ fields, rows });
+  } catch (error: any) {
     logger.error(error);
     res.status(500).json({ error });
-    return;
   }
-  logger.info(rows);
-  res.status(200).json({ fields, rows });
 }
