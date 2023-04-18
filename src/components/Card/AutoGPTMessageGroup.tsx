@@ -142,7 +142,7 @@ export default function AutoGPTMessageGroup() {
           .slice()
           .reverse()
           .map((q, idx) => (
-            <AutoGPTMessagePair key={`${q.id}`} question={q} />
+            <AutoGPTMessagePair key={`pair-${q.id}`} question={q} />
           ))}
       </Box>
       <AutoGPTSearchInput />

@@ -2,6 +2,11 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import { useRecoilState } from 'recoil';
+
+import { questionsState, questionLoadingState } from 'src/recoil/atoms';
 
 const STATIC_QUESTIONS = [
   `How many new users are there in 2022?`,
@@ -29,12 +34,27 @@ const INTERVAL = 5000;
 export default function HorizontalBar() {
   const [index, setIndex] = React.useState(0);
 
+  const [questions, setQuestions] = useRecoilState(questionsState);
+  const [loading, setLoading] = useRecoilState(questionLoadingState);
+
   React.useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % STATIC_QUESTIONS.length);
     }, INTERVAL);
     return () => clearInterval(interval);
   }, []);
+
+  const handleClick = (q: string) => () => {
+    !loading &&
+      setQuestions((prev) => [
+        ...prev,
+        {
+          q,
+          id: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        },
+      ]);
+  };
 
   return (
     <Box
@@ -49,7 +69,7 @@ export default function HorizontalBar() {
         color: '#777',
       }}
     >
-      <Link href={`/?search=${encodeURIComponent(STATIC_QUESTIONS[index])}`}>
+      {/* <Link href={`/?search=${encodeURIComponent(STATIC_QUESTIONS[index])}`}>
         <Typography
           sx={{
             '&:hover': {
@@ -57,7 +77,16 @@ export default function HorizontalBar() {
             },
           }}
         >{`${STATIC_QUESTIONS[index]}`}</Typography>
-      </Link>
+      </Link> */}
+      <Typography
+        sx={{
+          '&:hover': {
+            textDecoration: 'underline',
+            cursor: loading ? 'not-allowed' : 'pointer',
+          },
+        }}
+        onClick={handleClick(STATIC_QUESTIONS[index])}
+      >{`${STATIC_QUESTIONS[index]}`}</Typography>
     </Box>
   );
 }
