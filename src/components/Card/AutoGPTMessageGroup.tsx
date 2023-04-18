@@ -48,7 +48,7 @@ function AutoGPTSearchInput() {
   // const router = useRouter();
 
   const handleSearch = async (q: string) => {
-    if (loading && questions.slice(-1)[0]) {
+    if (loading && questions.slice(-1)[0]?.agentId) {
       setQuestions((prev) => [
         ...prev.slice(0, -1),
         {
@@ -61,7 +61,10 @@ function AutoGPTSearchInput() {
         },
       ]);
       setDisableInput(true);
-      await postAutoGPTAgentFeedback(questions.slice(-1)[0].id, q);
+      await postAutoGPTAgentFeedback(
+        questions.slice(-1)[0].agentId as number,
+        q
+      );
       return;
     }
     setLoading(true);
@@ -179,6 +182,7 @@ export function AutoGPTMessagePair(props: {
         ) {
           stop = true;
           setLoading(false);
+          setDisableInput(false);
         }
       }
     };
