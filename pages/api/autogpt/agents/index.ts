@@ -27,14 +27,17 @@ export default async function handler(
   }
 
   const data = await axios
-    .post(`${AUTOGPT_HOST}/api/agents/`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: {
+    .post(
+      `${AUTOGPT_HOST}/api/agents/`,
+      {
         question,
       },
-    })
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
     .then((response) => response.data as AgentResType);
 
   res.status(200).json(data);
