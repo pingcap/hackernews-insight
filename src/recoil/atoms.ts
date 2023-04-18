@@ -11,7 +11,7 @@ import { ChatMessageType, QuestionType } from 'src/types';
 
 export const questionsState = atom<
   (QuestionType & {
-    feedback?: Omit<QuestionType, 'agentId'>;
+    feedback?: Omit<QuestionType, 'agentId'>[];
   })[]
 >({
   key: 'questionsState', // unique ID (with respect to other atoms/selectors)

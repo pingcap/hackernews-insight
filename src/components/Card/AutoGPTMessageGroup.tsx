@@ -18,6 +18,7 @@ import remarkGfm from 'remark-gfm';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useRouter } from 'next/router';
+import { VariantType, useSnackbar } from 'notistack';
 
 import 'github-markdown-css/github-markdown-light.css';
 
@@ -45,6 +46,7 @@ function AutoGPTSearchInput() {
     questionDisableInputState
   );
 
+  const { enqueueSnackbar } = useSnackbar();
   // const router = useRouter();
 
   const handleSearch = async (q: string) => {
@@ -53,18 +55,36 @@ function AutoGPTSearchInput() {
         ...prev.slice(0, -1),
         {
           ...prev.slice(-1)[0],
-          feedback: {
-            q,
-            id: generateRandomString(128),
-            createdAt: new Date().toISOString(),
-          },
+          feedback: [
+            ...(prev.slice(-1)[0].feedback || []),
+            {
+              q,
+              id: generateRandomString(128),
+              createdAt: new Date().toISOString(),
+            },
+          ],
         },
       ]);
       setDisableInput(true);
-      await postAutoGPTAgentFeedback(
-        questions.slice(-1)[0].agentId as number,
-        q
-      );
+      try {
+        await postAutoGPTAgentFeedback(
+          questions.slice(-1)[0].agentId as number,
+          q
+        );
+      } catch (error: any) {
+        console.error(error);
+        enqueueSnackbar(
+          <Typography>
+            {`${
+              error?.response?.data?.error?.content?.join('\n') ||
+              error?.message ||
+              error
+            }`}
+          </Typography>,
+          { variant: 'error' }
+        );
+      }
+
       return;
     }
     setLoading(true);
@@ -131,7 +151,7 @@ export default function AutoGPTMessageGroup() {
 }
 
 export function AutoGPTMessagePair(props: {
-  question: QuestionType & { feedback?: Omit<QuestionType, 'agentId'> };
+  question: QuestionType & { feedback?: Omit<QuestionType, 'agentId'>[] };
 }) {
   const {
     question: { id: questionId, q, agentId: agentIdProp, feedback },
@@ -220,17 +240,19 @@ export function AutoGPTMessagePair(props: {
       );
     }
     if (feedback) {
-      result.push({
-        role: 'user',
-        createAt: feedback.createdAt,
-        ele: (
-          <ChatBubble
-            key={`user-${feedback.id}`}
-            role="user"
-            content={feedback.q}
-          />
-        ),
-      });
+      result.push(
+        ...feedback.map((f) => ({
+          role: 'user',
+          createAt: f.createdAt,
+          ele: (
+            <>
+              {f.q && (
+                <ChatBubble key={`user-${f.id}`} role="user" content={f.q} />
+              )}
+            </>
+          ),
+        }))
+      );
     }
     return result;
   }, [logs, feedback]);

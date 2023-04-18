@@ -8,6 +8,9 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from '@src/theme';
 import type { AppProps } from 'next/app';
 import { RecoilRoot, useRecoilSnapshot } from 'recoil';
+import { SnackbarProvider, closeSnackbar } from 'notistack';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 import GA4 from 'src/components/Layout/GoogleAnalytics';
 
@@ -29,7 +32,19 @@ export default function App({ Component, pageProps }: AppProps) {
       <DebugObserver />
       <ThemeProvider theme={theme}>
         <GA4 />
-        <Component {...pageProps} />
+        <SnackbarProvider
+          maxSnack={3}
+          action={(snackbarId) => (
+            <Button onClick={() => closeSnackbar(snackbarId)} sx={{
+              color: "#fff",
+            }}>
+              Dismiss
+            </Button>
+          )}
+          anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+        >
+          <Component {...pageProps} />
+        </SnackbarProvider>
       </ThemeProvider>
     </RecoilRoot>
   );
