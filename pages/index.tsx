@@ -31,34 +31,34 @@ export interface HomeProps {
 export default function Home(props: HomeProps) {
   const { rows, sqlAnswer, chartAnswer, question } = props;
 
-  const router = useRouter();
-  const { search } = router.query;
-  // const question = decodeURIComponent(q as string);
-  const questionMemo = React.useMemo(() => {
-    if (search) return decodeURIComponent(search as string);
-    return null;
-  }, [search]);
+  // const router = useRouter();
+  // const { search } = router.query;
+  // // const question = decodeURIComponent(q as string);
+  // const questionMemo = React.useMemo(() => {
+  //   if (search) return decodeURIComponent(search as string);
+  //   return null;
+  // }, [search]);
 
   const [questions, setQuestions] = useRecoilState(questionsState);
   const [loading, setLoading] = useRecoilState(questionLoadingState);
 
-  const handleSearch = (q: string) => {
-    setLoading(true);
-    setQuestions((prev) => [...prev, q]);
-  };
+  // const handleSearch = (q: string) => {
+  //   setLoading(true);
+  //   setQuestions((prev) => [...prev, q]);
+  // };
 
-  React.useEffect(() => {
-    const lastQuestion =
-      questions.length > 0 ? questions[questions.length - 1] : '';
-    if (questionMemo && questionMemo !== lastQuestion) {
-      handleSearch(questionMemo);
-    }
-  }, [questionMemo, questions]);
+  // React.useEffect(() => {
+  //   const lastQuestion =
+  //     questions.length > 0 ? questions[questions.length - 1] : '';
+  //   if (questionMemo && questionMemo !== lastQuestion) {
+  //     handleSearch(questionMemo);
+  //   }
+  // }, [questionMemo, questions]);
 
   return (
     <>
       <Layout recapcha disableSearch={loading} hideSearch>
-        {questions.length < 5 && <HorizontalBar />}
+        {/* {questions.length < 5 && <HorizontalBar />} */}
         {/* <AnswerCardsGroup
           initialData={{ rows, sqlAnswer, chartAnswer, question }}
         /> */}

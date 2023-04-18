@@ -35,3 +35,24 @@ export async function getAutoGPTAgentLogs(id: number | string) {
     .get(`/api/autogpt/agents/${id}/logs?start_from=0`)
     .then((response) => response.data as AgentLogType[]);
 }
+
+export async function postAutoGPTAgentFeedback(
+  id: number | string,
+  content: string
+) {
+  await waitGRecaptchaReady();
+  const grecaptchaToken = await grecaptcha.enterprise.execute(
+    process.env.NEXT_PUBLIC_RECAPTCHA_KEY || '',
+    {
+      action: 'CHAT',
+    }
+  );
+  const axios = axiosWithRecaptchaToken(grecaptchaToken);
+
+  return axios
+    .post(`/api/autogpt/agents/${id}/feedback`, {
+      continuous_num: 1,
+      content,
+    })
+    .then((response) => response.data);
+}

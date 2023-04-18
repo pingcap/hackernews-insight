@@ -6,7 +6,7 @@ export type AgentLogType = {
   content: string;
   role: 'system';
   log_level: 'debug' | 'info' | 'error';
-  status: 'loading' | 'processing' | 'task_complete';
+  status: 'loading' | 'processing' | 'task_complete' | 'wait_user_feedback';
   created_at: string;
 };
 
