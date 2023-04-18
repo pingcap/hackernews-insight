@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev | pino-pretty",
+    "dev:server": "next dev -p 8001 | pino-pretty",
     "build": "next build",
     "start": "next start | pino-pretty",
     "start:server": "next start -p 8001 | pino-pretty",
