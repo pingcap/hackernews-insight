@@ -14,6 +14,7 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Head from 'next/head';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useRouter } from 'next/router';
@@ -209,7 +210,9 @@ function ChatBubble(props: {
         >
           {content && (
             <Box className="markdown-body">
-              <ReactMarkdown>{content}</ReactMarkdown>
+              <ReactMarkdown rehypePlugins={[remarkGfm]}>
+                {content}
+              </ReactMarkdown>
             </Box>
           )}
           <Box>{children}</Box>
