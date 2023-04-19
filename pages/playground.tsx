@@ -9,30 +9,9 @@ import Layout from 'src/components/Layout';
 import { postAdminSQL } from 'src/api/admin';
 import CodeBlock from 'src/components/Block/CodeBlock';
 import { row2string } from 'src/utils/stringfy';
+import { DynamicSQLEditor } from 'src/components/Editor';
 
 import logger from 'next-pino/logger';
-
-const DynamicAceSQLEditor = dynamic(
-  () => import('src/components/Editor/SQLEditor'),
-  {
-    loading: () => <>Loading...</>,
-    ssr: false, // https://nextjs.org/docs/advanced-features/dynamic-import#with-no-ssr
-  }
-);
-
-// const Ace = dynamic(
-//   async () => {
-//     const ace = await import('react-ace');
-//     await import('ace-builds/src-noconflict/mode-mysql');
-//     await import('ace-builds/src-noconflict/theme-xcode');
-//     await import('ace-builds/src-noconflict/ext-language_tools');
-//     return ace;
-//   },
-//   {
-//     loading: () => <>{`Loading...`}</>,
-//     ssr: false,
-//   }
-// );
 
 export default function AdminPage() {
   return (
@@ -113,14 +92,7 @@ function SQLPlaygroundSection() {
           height: '300px',
         }}
       >
-        <DynamicAceSQLEditor
-          mode="mysql"
-          theme="xcode"
-          value={value}
-          onChange={handleChange}
-          name="SQL_PLAYGROUND"
-          enableBasicAutocompletion
-        />
+        <DynamicSQLEditor onChange={handleChange} value={value} />
       </Box>
       <Box
         sx={{
