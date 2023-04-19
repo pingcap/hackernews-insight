@@ -24,6 +24,8 @@ export default function Code(props: any) {
         customStyle={{
           backgroundColor: 'transparent',
         }}
+        wrapLongLines={true}
+        lineProps={{ style: { flexWrap: 'wrap' } }}
       />
     );
   }
