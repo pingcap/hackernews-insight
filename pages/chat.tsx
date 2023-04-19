@@ -17,6 +17,7 @@ import InputBase from '@mui/material/InputBase';
 import Head from 'next/head';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw'
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import 'github-markdown-css/github-markdown-light.css';
@@ -173,7 +174,7 @@ function ChatBubble(props: { item: ChatMessageType }) {
           className="markdown-body"
         >
           {role === 'user' && (
-            <ReactMarkdown rehypePlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            <ReactMarkdown rehypePlugins={[rehypeRaw, remarkGfm]}>{content}</ReactMarkdown>
           )}
           {role === 'assistant' && <AssistantBubbleContent content={content} />}
         </Paper>
@@ -274,7 +275,7 @@ const AssistantBubbleContent = (props: { content: string }) => {
 
   return (
     <>
-      <ReactMarkdown rehypePlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      <ReactMarkdown rehypePlugins={[rehypeRaw, remarkGfm]}>{content}</ReactMarkdown>
       {SqlStrMemo && (
         <LoadingButton
           loading={loading}

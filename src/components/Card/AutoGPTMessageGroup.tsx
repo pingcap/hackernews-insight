@@ -15,10 +15,13 @@ import InputBase from '@mui/material/InputBase';
 import Head from 'next/head';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw'
 import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useRouter } from 'next/router';
 import { VariantType, useSnackbar } from 'notistack';
+import Chip from '@mui/material/Chip';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
 
 import 'github-markdown-css/github-markdown-light.css';
 
@@ -312,6 +315,10 @@ export function AutoGPTMessagePair(props: {
             </Box>
           </ChatBubble>
         )}
+
+      {lastLogMemo && lastLogMemo.status === 'wait_user_feedback' && (
+        <FeedbackActionChips />
+      )}
     </Box>
   );
 }
@@ -352,7 +359,7 @@ function ChatBubble(props: {
         >
           {content && (
             <Box className="markdown-body">
-              <ReactMarkdown rehypePlugins={[remarkGfm]}>
+              <ReactMarkdown rehypePlugins={[rehypeRaw, remarkGfm]}>
                 {content}
               </ReactMarkdown>
             </Box>
@@ -360,6 +367,17 @@ function ChatBubble(props: {
           <Box>{children}</Box>
         </Paper>
       </Box>
+    </>
+  );
+}
+
+function FeedbackActionChips() {
+  return (
+    <>
+      <Stack direction="row" spacing={1}>
+        <Chip label="Ignore feedback" icon={<SkipNextIcon />} />
+        <Chip label="Chip Outlined" variant="outlined" />
+      </Stack>
     </>
   );
 }
