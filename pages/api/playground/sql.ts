@@ -35,7 +35,7 @@ export default async function handler(
     // throw new Error(error);
     logger.error(
       {
-        name: 'api/admin/sql',
+        name: 'api/playground/sql',
         error,
       },
       `execute SQL error`

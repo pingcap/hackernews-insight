@@ -12,7 +12,7 @@ export async function postAdminSQL(sql: string) {
   const axios = axiosWithRecaptchaToken(grecaptchaToken);
 
   return axios
-    .post('/api/admin/sql', {
+    .post('/api/playground/sql', {
       sql,
     })
     .then((response) => response.data);

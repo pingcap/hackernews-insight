@@ -39,6 +39,7 @@ function SQLPlaygroundSection() {
   };
 
   const handleRun = async () => {
+    if (loading) return;
     setLoading(true);
     setError(null);
     setRows(null);
@@ -59,6 +60,24 @@ function SQLPlaygroundSection() {
       setLoading(false);
     }
   };
+
+  const sqlEditorContainerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const keydownHandler = (e: KeyboardEvent) => {
+      if (e.code == 'Enter' && e.metaKey) {
+        handleRun();
+      }
+    };
+
+    if (sqlEditorContainerRef.current) {
+      window.addEventListener('keydown', keydownHandler);
+
+      return () => {
+        window.removeEventListener('keydown', keydownHandler);
+      };
+    }
+  }, [value]);
 
   return (
     <>
@@ -88,6 +107,8 @@ function SQLPlaygroundSection() {
         </LoadingButton>
       </Box>
       <Box
+        id="sql-editor-container"
+        ref={sqlEditorContainerRef}
         sx={{
           height: '300px',
         }}
