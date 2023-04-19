@@ -15,7 +15,7 @@ import InputBase from '@mui/material/InputBase';
 import Head from 'next/head';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw'
+import rehypeRaw from 'rehype-raw';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useRouter } from 'next/router';
@@ -40,6 +40,7 @@ import { SearchInput } from 'src/components/Layout/QuestionHeader';
 import { generateRandomString } from 'src/utils';
 import { QuestionType } from 'src/types';
 import SuggestedQuestionCard from 'src/components/Card/SuggestedQuestionCard';
+import { useCountdownSeconds } from 'src/utils/hook';
 
 function AutoGPTSearchInput(props: {
   handleSearch: (q: string, agentId?: number) => void;
@@ -316,9 +317,11 @@ export function AutoGPTMessagePair(props: {
           </ChatBubble>
         )}
 
-      {lastLogMemo && lastLogMemo.status === 'wait_user_feedback' && (
-        <FeedbackActionChips />
-      )}
+      {lastLogMemo &&
+        agentId &&
+        lastLogMemo.status === 'wait_user_feedback' && (
+          <FeedbackActionChips agentId={agentId} />
+        )}
     </Box>
   );
 }
@@ -371,13 +374,61 @@ function ChatBubble(props: {
   );
 }
 
-function FeedbackActionChips() {
+function FeedbackActionChips(props: { agentId: number; countDown?: number }) {
+  const { agentId, countDown: defaultCountDown } = props;
+
+  const [isSubmitted, setIsSubmitted] = React.useState(false);
+
+  const [disableInput, setDisableInput] = useRecoilState(
+    questionDisableInputState
+  );
+  const countDown = useCountdownSeconds(defaultCountDown || 5);
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleSkipClick = () => {
+    console.log('skip', agentId);
+    postSkipFeedback();
+  };
+
+  const postSkipFeedback = async () => {
+    try {
+      setDisableInput(true);
+      setIsSubmitted(true);
+      const res = await postAutoGPTAgentFeedback(agentId, '');
+      // console.log(res);
+    } catch (error: any) {
+      console.error(error);
+      enqueueSnackbar(
+        <Typography>
+          {`${
+            error?.response?.data?.error?.content?.join('\n') ||
+            error?.message ||
+            error
+          }`}
+        </Typography>,
+        { variant: 'error' }
+      );
+    }
+  };
+
+  React.useEffect(() => {
+    if (!isSubmitted && countDown === 0) {
+      postSkipFeedback();
+    }
+  }, [countDown, isSubmitted]);
+
   return (
     <>
-      <Stack direction="row" spacing={1}>
-        <Chip label="Ignore feedback" icon={<SkipNextIcon />} />
-        <Chip label="Chip Outlined" variant="outlined" />
-      </Stack>
+      {!isSubmitted && (
+        <Stack direction="row" spacing={1}>
+          <Chip
+            label={`Ignore feedback${countDown ? ` (${countDown})` : ''}`}
+            icon={<SkipNextIcon />}
+            onClick={handleSkipClick}
+          />
+          {/* <Chip label="Chip Outlined" variant="outlined" /> */}
+        </Stack>
+      )}
     </>
   );
 }
