@@ -22,8 +22,6 @@ import { useRouter } from 'next/router';
 import { VariantType, useSnackbar } from 'notistack';
 import Chip from '@mui/material/Chip';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
-import { LightAsync as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { stackoverflowLight } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 
 import 'github-markdown-css/github-markdown-light.css';
 
