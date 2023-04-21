@@ -29,6 +29,7 @@ import {
   questionsState,
   questionLoadingState,
   questionDisableInputState,
+  questionIsInputingState,
 } from 'src/recoil/atoms';
 import {
   postAutoGPTAgents,
@@ -55,6 +56,7 @@ function AutoGPTSearchInput(props: {
   const [disableInput, setDisableInput] = useRecoilState(
     questionDisableInputState
   );
+  const [isInputing, setIsInputing] = useRecoilState(questionIsInputingState);
 
   return (
     <SearchInput
@@ -67,11 +69,13 @@ function AutoGPTSearchInput(props: {
         if (e.key === 'Enter') {
           handleSearch(search, questions.slice(-1)[0]?.agentId);
           setSearch('');
+          isInputing && setIsInputing(false);
         }
+        !isInputing && setIsInputing(true);
       }}
       onClear={() => {
         setSearch('');
-        handleSearch('');
+        isInputing && setIsInputing(false);
       }}
     />
   );
@@ -388,6 +392,7 @@ function FeedbackActionChips(props: { agentId: number; countDown?: number }) {
   const [disableInput, setDisableInput] = useRecoilState(
     questionDisableInputState
   );
+  const [isInputing, setIsInputing] = useRecoilState(questionIsInputingState);
   const countDown = useCountdownSeconds(defaultCountDown || 5);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -418,17 +423,19 @@ function FeedbackActionChips(props: { agentId: number; countDown?: number }) {
   };
 
   React.useEffect(() => {
-    if (!isSubmitted && countDown === 0) {
+    if (!isSubmitted && !isInputing && countDown === 0) {
       postSkipFeedback();
     }
-  }, [countDown, isSubmitted]);
+  }, [countDown, isSubmitted, isInputing]);
 
   return (
     <>
       {!isSubmitted && (
         <Stack direction="row" spacing={1}>
           <Chip
-            label={`Ignore feedback${countDown ? ` (${countDown})` : ''}`}
+            label={`Ignore feedback${
+              !isInputing && countDown ? ` (${countDown})` : ''
+            }`}
             icon={<SkipNextIcon />}
             onClick={handleSkipClick}
           />

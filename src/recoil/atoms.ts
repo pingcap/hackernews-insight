@@ -28,6 +28,11 @@ export const questionDisableInputState = atom<boolean>({
   default: false, // default value (aka initial value)
 });
 
+export const questionIsInputingState = atom<boolean>({
+  key: 'questionIsInputingState',
+  default: false,
+});
+
 export const chatMessagesState = atom<ChatMessageType[]>({
   key: 'chatMessagesState', // unique ID (with respect to other atoms/selectors)
   default: [], // default value (aka initial value)
