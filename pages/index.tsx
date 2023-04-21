@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import Layout from 'src/components/Layout';
 // import AnswerCardsGroup from 'src/components/Card/AnswerCardsGroup';
-import AutoGPTMessageGroup from 'src/components/Card/AutoGPTMessageGroup';
+import AutoGPTMessageGroup from '@src/components/Chat/AutoGPTMessageGroup';
 import { questionsState, questionLoadingState } from 'src/recoil/atoms';
 import logger from 'next-pino/logger';
 
